@@ -19,17 +19,20 @@ rectangle "Система автосалона" {
 
 ' Связи актора с use cases
 Customer --> UC1
-Customer --> UC2
-Customer --> UC3
-Customer --> UC5
+
+UC1 --> UC9
+UC1 --> UC2
+UC2 --> UC3
+UC3 --> UC8
+
 
 ' Include отношения
-UC3 ..> UC4 : <<include>>
-UC5 ..> UC6 : <<include>>
-UC6 ..> UC7 : <<include>>
-UC6 ..> UC8 : <<include>>
+UC4 --> UC3 : <<include>>
+UC7 --> UC8 : <<include>>
+
 
 ' Extend отношения
-UC2 <.. UC9 : <<extend>>
+UC9 <.. UC6 : <<extend>>
+UC8 <.. UC5 : <<extend>>
 
 @enduml
