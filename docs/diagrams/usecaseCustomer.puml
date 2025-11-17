@@ -1,0 +1,35 @@
+@startuml
+!theme plain
+
+left to right direction
+
+actor "Покупатель" as Customer
+
+rectangle "Система автосалона" {
+  usecase "Авторизация" as UC1
+  usecase "Просмотр каталога автомобилей" as UC2
+  usecase "Выбор автомобиля" as UC3
+  usecase "Просмотр характеристик автомобиля" as UC4
+  usecase "Создание бронирования" as UC5
+  usecase "Подтверждение бронирования" as UC6
+  usecase "Ввод контактных данных" as UC7
+  usecase "Проверка наличия автомобиля" as UC8
+  usecase "Просмотр бронирований" as UC9
+}
+
+' Связи актора с use cases
+Customer --> UC1
+Customer --> UC2
+Customer --> UC3
+Customer --> UC9
+
+' Include отношения
+UC3 ..> UC4 : <<include>>
+UC5 ..> UC6 : <<include>>
+UC6 ..> UC7 : <<include>>
+UC6 ..> UC8 : <<include>>
+
+' Extend отношения
+UC2 <.. UC9 : <<extend>>
+
+@enduml

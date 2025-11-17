@@ -1,3 +1,14 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
 # PyCharm IDE
 .idea/
 *.iml
+
+# Environment variables
+.env
+.venv
+venv/
