@@ -15,11 +15,11 @@ rectangle "Система автосалона" {
 }
 
 ' Связи актора с use cases
-Manager --> UC1
+Manager -- UC1
 
-UC1 --> UC2
-UC1 --> UC3
-UC1 --> UC4
+UC1 -- UC2
+UC1 -- UC3
+UC1 -- UC4
 
 ' Extend отношения
 UC2 <.. UC5 : <<extend>>
