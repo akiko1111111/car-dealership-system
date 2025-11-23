@@ -7,6 +7,7 @@ class Database:
     def __init__(self, db_name='car_dealership.db'):
         self.db_name = db_name
         self._create_tables()
+        self._insert_initial_data()
 
     def _create_tables(self):
         """Создает таблицы в базе данных, если они не существуют."""
@@ -30,6 +31,7 @@ class Database:
                 Car_ID INTEGER PRIMARY KEY AUTOINCREMENT,
                 Name TEXT NOT NULL,
                 Model TEXT NOT NULL,
+                Color TEXT NOT NULL,
                 Price DECIMAL(10, 2) NOT NULL,
                 CarStatus_ID INTEGER NOT NULL,
                 FOREIGN KEY (CarStatus_ID) REFERENCES CarStatus (CarStatus_ID)
@@ -48,7 +50,7 @@ class Database:
                 Customer_ID INTEGER NOT NULL,
                 Car_ID INTEGER NOT NULL,
                 Booking_Date DATETIME NOT NULL,
-                Booking_status BOOLEAN NOT NULL DEFAULT 0, -- 0 = активна, 1 = завершена (подтверждена/отменена)
+                Booking_status BOOLEAN NOT NULL DEFAULT 0,
                 FOREIGN KEY (Customer_ID) REFERENCES Customer (Customer_ID),
                 FOREIGN KEY (Car_ID) REFERENCES Car (Car_ID)
             );
@@ -66,7 +68,6 @@ class Database:
         with sqlite3.connect(self.db_name) as conn:
             cursor = conn.cursor()
 
-            # Добавляем возможные статусы автомобиля
             car_statuses = [
                 (1, 'На складе'),
                 (2, 'Забронирован'),
@@ -75,30 +76,36 @@ class Database:
             try:
                 cursor.executemany("INSERT OR IGNORE INTO CarStatus (CarStatus_ID, Name) VALUES (?, ?)", car_statuses)
             except sqlite3.IntegrityError:
-                pass # Игнорируем ошибку, если статусы уже есть
+                pass
 
-            # Добавляем тестового менеджера
             managers = [('Админ', 'admin')]
             try:
                 cursor.executemany("INSERT OR IGNORE INTO Manager (Name, Password) VALUES (?, ?)", managers)
             except sqlite3.IntegrityError:
                 pass
 
-            # Добавляем тестовые автомобили
             cars = [
-                ('Toyota', 'Camry', 2500000.00, 1), # На складе
-                ('Honda', 'Civic', 1800000.00, 1),  # На складе
-                ('BMW', 'X5', 5000000.00, 3),       # Продан
+                ('Genesis', 'GV80', 'Серый', 8000000.00, 1),
+                ('Haval', 'F7', 'Океанический лазурит', 3500000.00, 1),
+                ('Kia', 'Sportage', 'Темно-серый', 2000000.00, 1),
+                ('Zeekr', '001', 'Оранжевый', 16000000.00, 1),
+                ('Infiniti', 'QX70', 'Чёрный', 4000000.00, 1),
+                ('Infiniti', 'QX60', 'Темно-синий', 4500000.00, 1),
+                ('Infiniti', 'QX80', 'Чёрный', 4000000.00, 1),
+                ('Volvo', 'XC70', 'Серебристо-коричневый', 3500000.00, 1),
+                ('Toyota', 'Camry', 'Чёрный', 2500000.00, 1),
+                ('Honda', 'CR-V', 'Черный', 5000000.00, 1),
+                ('BMW', 'X5', 'Синий', 5000000.00, 3),
+                ('Kia', 'Rio', 'Красный', 1200000.00, 1),
+                ('Mercedes', 'E-Class', 'Серебристый', 4500000.00, 1),
             ]
             try:
-                cursor.executemany("INSERT OR IGNORE INTO Car (Name, Model, Price, CarStatus_ID) VALUES (?, ?, ?, ?)", cars)
+                cursor.executemany("INSERT OR IGNORE INTO Car (Name, Model, Color, Price, CarStatus_ID) VALUES (?, ?, ?, ?, ?)", cars)
             except sqlite3.IntegrityError:
                 pass
 
             conn.commit()
 
-# При первом запуске создастся база с таблицами и тестовыми данными
 if __name__ == "__main__":
     db = Database()
-    db._insert_initial_data()
     print("База данных инициализирована успешно!")

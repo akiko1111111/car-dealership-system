@@ -8,13 +8,20 @@ def customer_auth(db):
     phone = input("Введите ваш номер телефона: ")
     with sqlite3.connect(db.db_name) as conn:
         cursor = conn.cursor()
-        cursor.execute("SELECT Customer_ID, Name FROM Customer WHERE Phone_number = ?", (phone,))
+        cursor.execute("SELECT Customer_ID, Name, Password FROM Customer WHERE Phone_number = ?", (phone,))
         customer = cursor.fetchone()
 
         if customer:
-            print(f"Добро пожаловать, {customer[1]}!")
-            return customer[0] # Возвращаем ID клиента
+            # Клиент найден - запрашиваем пароль
+            password = input("Введите пароль: ")
+            if password == customer[2]:
+                print(f"Добро пожаловать, {customer[1]}!")
+                return customer[0]
+            else:
+                print("Неверный пароль!")
+                return None
         else:
+            # Новый клиент - регистрация
             print("Номер не найден. Требуется регистрация.")
             name = input("Введите ваше имя: ")
             password = input("Придумайте пароль: ")
@@ -58,8 +65,8 @@ def view_car_catalog(db):
     with sqlite3.connect(db.db_name) as conn:
         cursor = conn.cursor()
         cursor.execute("""
-            SELECT Car_ID, Name, Model, Price FROM Car
-            WHERE CarStatus_ID = 1 -- На складе
+            SELECT Car_ID, Name, Model, Color, Price FROM Car
+            WHERE CarStatus_ID = 1
         """)
         cars = cursor.fetchall()
 
@@ -69,7 +76,7 @@ def view_car_catalog(db):
 
     print("\n--- Доступные автомобили ---")
     for car in cars:
-        print(f"ID: {car[0]}, {car[1]} {car[2]}, Цена: {car[3]:.2f} руб.")
+        print(f"ID: {car[0]}, {car[1]} {car[2]}, Цвет: {car[3]}, Цена: {car[4]:.2f} руб.")
 
 def book_car(db, customer_id):
     """Процесс бронирования автомобиля."""
@@ -81,26 +88,23 @@ def book_car(db, customer_id):
 
     with sqlite3.connect(db.db_name) as conn:
         cursor = conn.cursor()
-        # Проверяем, свободна ли машина
-        cursor.execute("SELECT CarStatus_ID FROM Car WHERE Car_ID = ?", (car_id,))
-        car_status = cursor.fetchone()
+        cursor.execute("SELECT CarStatus_ID, Name, Model, Color FROM Car WHERE Car_ID = ?", (car_id,))
+        car_info = cursor.fetchone()
 
-        if not car_status:
+        if not car_info:
             print("Автомобиль с таким ID не найден.")
             return
-        if car_status[0] != 1: # Если не на складе
+        if car_info[0] != 1:
             print("Этот автомобиль недоступен для бронирования.")
             return
 
         try:
-            # Создаем бронь
             booking_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             cursor.execute("INSERT INTO Booking (Customer_ID, Car_ID, Booking_Date, Booking_status) VALUES (?, ?, ?, ?)",
                            (customer_id, car_id, booking_date, 0))
-            # Меняем статус автомобиля на "Забронирован" (ID=2)
             cursor.execute("UPDATE Car SET CarStatus_ID = 2 WHERE Car_ID = ?", (car_id,))
             conn.commit()
-            print("Автомобиль успешно забронирован! Ожидайте звонка менеджера.")
+            print(f"Автомобиль {car_info[1]} {car_info[2]} ({car_info[3]}) успешно забронирован! Ожидайте звонка менеджера.")
         except sqlite3.Error as e:
             print(f"Произошла ошибка при бронировании: {e}")
 
@@ -109,7 +113,7 @@ def view_my_bookings(db, customer_id):
     with sqlite3.connect(db.db_name) as conn:
         cursor = conn.cursor()
         cursor.execute("""
-            SELECT b.Booking_ID, car.Name || ' ' || car.Model, b.Booking_Date, b.Booking_status
+            SELECT b.Booking_ID, car.Name, car.Model, car.Color, b.Booking_Date, b.Booking_status
             FROM Booking b
             JOIN Car car ON b.Car_ID = car.Car_ID
             WHERE b.Customer_ID = ?
@@ -122,5 +126,5 @@ def view_my_bookings(db, customer_id):
 
     print("\n--- Ваши бронирования ---")
     for book in bookings:
-        status = "Подтверждена" if book[3] == 1 else "Активна (ожидание)"
-        print(f"ID брони: {book[0]}, Авто: {book[1]}, Дата: {book[2]}, Статус: {status}")
+        status = "Подтверждена" if book[5] == 1 else "Активна (ожидание)"
+        print(f"ID брони: {book[0]}, Авто: {book[1]} {book[2]}, Цвет: {book[3]}, Дата: {book[4]}, Статус: {status}")
