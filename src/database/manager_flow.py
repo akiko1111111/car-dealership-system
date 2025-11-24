@@ -238,7 +238,7 @@ def view_all_cars(db):
             SELECT c.Car_ID, c.Name, c.Model, c.Color, c.Price, cs.Name 
             FROM Car c 
             JOIN CarStatus cs ON c.CarStatus_ID = cs.CarStatus_ID
-            ORDER BY c.CarStatus_ID, c.Name
+            ORDER BY c.Car_ID
         """)
         cars = cursor.fetchall()
 
@@ -247,5 +247,5 @@ def view_all_cars(db):
         return
 
     print("\n--- Все автомобили в системе ---")
-    for car in cars:
-        print(f"ID: {car[0]}, {car[1]} {car[2]}, Цвет: {car[3]}, Цена: {car[4]:.2f} руб., Статус: {car[5]}")
+    for index, car in enumerate(cars, 1):  # Нумерация с 1
+        print(f"{index}. {car[1]} {car[2]}, Цвет: {car[3]}, Цена: {car[4]:.2f} руб., Статус: {car[5]} (ID в системе: {car[0]})")

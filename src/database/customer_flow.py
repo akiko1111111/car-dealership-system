@@ -67,6 +67,7 @@ def view_car_catalog(db):
         cursor.execute("""
             SELECT Car_ID, Name, Model, Color, Price FROM Car
             WHERE CarStatus_ID = 1
+            ORDER BY Car_ID
         """)
         cars = cursor.fetchall()
 
@@ -75,38 +76,49 @@ def view_car_catalog(db):
         return
 
     print("\n--- Доступные автомобили ---")
-    for car in cars:
-        print(f"ID: {car[0]}, {car[1]} {car[2]}, Цвет: {car[3]}, Цена: {car[4]:.2f} руб.")
+    for index, car in enumerate(cars, 1):  # Нумерация с 1
+        print(f"{index}. {car[1]} {car[2]}, Цвет: {car[3]}, Цена: {car[4]:.2f} руб. (ID в системе: {car[0]})")
+
 
 def book_car(db, customer_id):
     """Процесс бронирования автомобиля."""
-    view_car_catalog(db)
-    car_id = input("Введите ID автомобиля для бронирования: ")
-    if not car_id.isdigit():
-        print("Ошибка: ID должен быть числом.")
-        return
-
     with sqlite3.connect(db.db_name) as conn:
         cursor = conn.cursor()
-        cursor.execute("SELECT CarStatus_ID, Name, Model, Color FROM Car WHERE Car_ID = ?", (car_id,))
-        car_info = cursor.fetchone()
+        cursor.execute("""
+            SELECT Car_ID, Name, Model, Color, Price FROM Car
+            WHERE CarStatus_ID = 1
+            ORDER BY Car_ID
+        """)
+        cars = cursor.fetchall()
 
-        if not car_info:
-            print("Автомобиль с таким ID не найден.")
-            return
-        if car_info[0] != 1:
-            print("Этот автомобиль недоступен для бронирования.")
-            return
+    if not cars:
+        print("Нет доступных для бронирования автомобилей.")
+        return
 
-        try:
-            booking_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            cursor.execute("INSERT INTO Booking (Customer_ID, Car_ID, Booking_Date, Booking_status) VALUES (?, ?, ?, ?)",
-                           (customer_id, car_id, booking_date, 0))
-            cursor.execute("UPDATE Car SET CarStatus_ID = 2 WHERE Car_ID = ?", (car_id,))
-            conn.commit()
-            print(f"Автомобиль {car_info[1]} {car_info[2]} ({car_info[3]}) успешно забронирован! Ожидайте звонка менеджера.")
-        except sqlite3.Error as e:
-            print(f"Произошла ошибка при бронировании: {e}")
+    print("\n--- Доступные автомобили ---")
+    for index, car in enumerate(cars, 1):
+        print(f"{index}. {car[1]} {car[2]}, Цвет: {car[3]}, Цена: {car[4]:.2f} руб.")
+
+    try:
+        choice = int(input("\nВведите номер автомобиля для бронирования: "))
+        if 1 <= choice <= len(cars):
+            selected_car = cars[choice - 1]
+            car_id = selected_car[0]
+
+            with sqlite3.connect(db.db_name) as conn:
+                cursor = conn.cursor()
+                booking_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                cursor.execute(
+                    "INSERT INTO Booking (Customer_ID, Car_ID, Booking_Date, Booking_status) VALUES (?, ?, ?, ?)",
+                    (customer_id, car_id, booking_date, 0))
+                cursor.execute("UPDATE Car SET CarStatus_ID = 2 WHERE Car_ID = ?", (car_id,))
+                conn.commit()
+                print(
+                    f"Автомобиль {selected_car[1]} {selected_car[2]} ({selected_car[3]}) успешно забронирован! Ожидайте звонка менеджера.")
+        else:
+            print("Неверный номер автомобиля.")
+    except ValueError:
+        print("Ошибка: введите число.")
 
 def view_my_bookings(db, customer_id):
     """Показывает бронирования текущего клиента."""
