@@ -1,0 +1,92 @@
+[
+  {
+    "booking_id": 1,
+    "booking_date": "2025-11-24 19:42:44",
+    "booking_status": "Завершена",
+    "customer": {
+      "customer_id": 1,
+      "name": "оля",
+      "phone": "89697646193"
+    },
+    "car": {
+      "car_id": 14,
+      "name": "Peugeot",
+      "model": "107",
+      "color": "фиолетовый",
+      "price": 750000.0,
+      "status": "Продан"
+    }
+  },
+  {
+    "booking_id": 2,
+    "booking_date": "2025-11-24 19:43:39",
+    "booking_status": "Активна",
+    "customer": {
+      "customer_id": 2,
+      "name": "оля в будущем",
+      "phone": "89018712646"
+    },
+    "car": {
+      "car_id": 5,
+      "name": "Infiniti",
+      "model": "QX70",
+      "color": "Чёрный",
+      "price": 4000000.0,
+      "status": "Забронирован"
+    }
+  },
+  {
+    "booking_id": 3,
+    "booking_date": "2025-11-24 19:43:42",
+    "booking_status": "Активна",
+    "customer": {
+      "customer_id": 2,
+      "name": "оля в будущем",
+      "phone": "89018712646"
+    },
+    "car": {
+      "car_id": 1,
+      "name": "Genesis",
+      "model": "GV80",
+      "color": "Серый",
+      "price": 8000000.0,
+      "status": "Забронирован"
+    }
+  },
+  {
+    "booking_id": 4,
+    "booking_date": "2025-11-24 19:44:59",
+    "booking_status": "Завершена",
+    "customer": {
+      "customer_id": 3,
+      "name": "Andrew",
+      "phone": "8950353622"
+    },
+    "car": {
+      "car_id": 4,
+      "name": "Zeekr",
+      "model": "001",
+      "color": "Оранжевый",
+      "price": 16000000.0,
+      "status": "Продан"
+    }
+  },
+  {
+    "booking_id": 5,
+    "booking_date": "2025-11-24 19:45:03",
+    "booking_status": "Завершена",
+    "customer": {
+      "customer_id": 3,
+      "name": "Andrew",
+      "phone": "8950353622"
+    },
+    "car": {
+      "car_id": 2,
+      "name": "Haval",
+      "model": "F7",
+      "color": "Океанический лазурит",
+      "price": 3500000.0,
+      "status": "Продан"
+    }
+  }
+]
