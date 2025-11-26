@@ -88,5 +88,23 @@
       "price": 3500000.0,
       "status": "Продан"
     }
+  },
+  {
+    "booking_id": 6,
+    "booking_date": "2025-11-26 16:41:31",
+    "booking_status": "Завершена",
+    "customer": {
+      "customer_id": 4,
+      "name": "Александр",
+      "phone": "89562457878"
+    },
+    "car": {
+      "car_id": 16,
+      "name": "Lada",
+      "model": "Granta",
+      "color": "Бронзовый",
+      "price": 700000.0,
+      "status": "Продан"
+    }
   }
 ]
